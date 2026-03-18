@@ -413,7 +413,7 @@
     <div class="navbar" id="navbar" style="display: none;">
         <div class="nav-logo">S1T</div>
         <div class="nav-links">
-            <a class="nav-link active" onclick="showPage('balance')">Баланс</a>
+            <a class="nav-link" onclick="showPage('balance')">Баланс</a>
             <a class="nav-link" onclick="showPage('transfers')">Переводы</a>
             <a class="nav-link" onclick="showPage('history')">История</a>
             <a class="nav-link" onclick="showPage('users')">Пользователи</a>
@@ -751,7 +751,7 @@
             }
         }
 
-        // Выход - теперь перенаправляет на страницу авторизации
+        // Выход
         function logout() {
             // Очищаем данные пользователя
             currentUser = null;
@@ -1022,7 +1022,8 @@
             }
         }
 
-        init();
+        // Запускаем инициализацию после загрузки страницы
+        window.onload = init;
     </script>
 </body>
 </html>
