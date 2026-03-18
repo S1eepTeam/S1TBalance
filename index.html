@@ -357,6 +357,28 @@
             margin: 0.3rem 0;
         }
 
+        /* Табы авторизации */
+        .auth-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .auth-tab.active {
+            background: linear-gradient(135deg, #2a3f5f, #1a2f4f);
+            border: 1px solid rgba(100, 180, 255, 0.3);
+        }
+
         @media (max-width: 768px) {
             .navbar {
                 padding: 1rem;
@@ -387,7 +409,7 @@
     </style>
 </head>
 <body>
-    <!-- Навигация -->
+    <!-- Навигация (видна только авторизованным пользователям) -->
     <div class="navbar" id="navbar" style="display: none;">
         <div class="nav-logo">S1T</div>
         <div class="nav-links">
@@ -401,7 +423,7 @@
     </div>
 
     <div class="container">
-        <!-- Страница входа/регистрации -->
+        <!-- Страница авторизации (вход/регистрация) -->
         <div class="page active" id="authPage">
             <div class="card">
                 <h1 class="page-title">Добро пожаловать в S1T</h1>
@@ -409,10 +431,10 @@
                 <div class="message message-error" id="authError"></div>
                 <div class="message message-success" id="authSuccess"></div>
                 
-                <!-- Вкладки -->
-                <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
-                    <button class="btn" style="flex: 1;" onclick="showAuthTab('login')" id="loginTabBtn">Вход</button>
-                    <button class="btn" style="flex: 1;" onclick="showAuthTab('register')" id="registerTabBtn">Регистрация</button>
+                <!-- Табы переключения между входом и регистрацией -->
+                <div class="auth-tabs">
+                    <div class="auth-tab active" id="loginTab" onclick="switchAuthTab('login')">Вход</div>
+                    <div class="auth-tab" id="registerTab" onclick="switchAuthTab('register')">Регистрация</div>
                 </div>
                 
                 <!-- Форма входа -->
@@ -586,27 +608,23 @@
         // Текущий пользователь
         let currentUser = JSON.parse(localStorage.getItem('s1t_currentUser')) || null;
 
-        // Показать вкладку авторизации
-        function showAuthTab(tab) {
+        // Переключение между вкладками входа и регистрации
+        function switchAuthTab(tab) {
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
-            const loginBtn = document.getElementById('loginTabBtn');
-            const registerBtn = document.getElementById('registerTabBtn');
             
             if (tab === 'login') {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
                 loginForm.style.display = 'block';
                 registerForm.style.display = 'none';
-                loginBtn.classList.add('btn-primary');
-                loginBtn.classList.remove('btn');
-                registerBtn.classList.add('btn');
-                registerBtn.classList.remove('btn-primary');
             } else {
-                loginForm.style.display = 'none';
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
                 registerForm.style.display = 'block';
-                registerBtn.classList.add('btn-success');
-                registerBtn.classList.remove('btn');
-                loginBtn.classList.add('btn');
-                loginBtn.classList.remove('btn-primary');
+                loginForm.style.display = 'none';
             }
         }
 
@@ -675,7 +693,7 @@
                 document.getElementById('regPassword').value = '';
                 
                 // Переключаем на вкладку входа
-                showAuthTab('login');
+                switchAuthTab('login');
                 
             } catch (error) {
                 errorDiv.textContent = 'Ошибка: ' + error.message;
@@ -733,16 +751,33 @@
             }
         }
 
-        // Выход
+        // Выход - теперь перенаправляет на страницу авторизации
         function logout() {
+            // Очищаем данные пользователя
             currentUser = null;
             localStorage.removeItem('s1t_currentUser');
+            
+            // Скрываем навигационную панель
             document.getElementById('navbar').style.display = 'none';
+            
+            // Показываем страницу авторизации
             showPage('authPage');
             
-            // Очищаем поля входа
+            // Сбрасываем форму входа
             document.getElementById('loginEmail').value = '';
             document.getElementById('loginPassword').value = '';
+            
+            // Сбрасываем форму регистрации
+            document.getElementById('regName').value = '';
+            document.getElementById('regEmail').value = '';
+            document.getElementById('regPassword').value = '';
+            
+            // Переключаем на вкладку входа
+            switchAuthTab('login');
+            
+            // Очищаем сообщения
+            document.getElementById('authError').classList.remove('show');
+            document.getElementById('authSuccess').classList.remove('show');
         }
 
         // Подписка на обновления пользователя
@@ -770,14 +805,14 @@
             
             document.getElementById(pageName + 'Page').classList.add('active');
             
-            if (pageName === 'balance') {
+            if (pageName === 'balance' && currentUser) {
                 updateUserDisplay();
-            } else if (pageName === 'transfers') {
+            } else if (pageName === 'transfers' && currentUser) {
                 document.getElementById('transferBalance').textContent = currentUser.balance + ' S1T';
                 document.getElementById('transferMyId').textContent = currentUser.id;
-            } else if (pageName === 'history') {
+            } else if (pageName === 'history' && currentUser) {
                 loadHistory();
-            } else if (pageName === 'users') {
+            } else if (pageName === 'users' && currentUser) {
                 loadUsers();
             }
         }
@@ -983,7 +1018,7 @@
             } else {
                 document.getElementById('navbar').style.display = 'none';
                 showPage('authPage');
-                showAuthTab('login');
+                switchAuthTab('login');
             }
         }
 
