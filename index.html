@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S1T | Банкинг (Firebase)</title>
+    <title>S1T | Банкинг</title>
     <style>
         * {
             margin: 0;
@@ -17,7 +17,6 @@
             min-height: 100vh;
             color: #ffffff;
             position: relative;
-            overflow-x: hidden;
         }
 
         body::before {
@@ -30,12 +29,13 @@
             z-index: 0;
         }
 
+        /* Навигация */
         .navbar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(10, 15, 25, 0.8);
+            background: rgba(10, 15, 25, 0.95);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 1rem 2rem;
@@ -54,12 +54,11 @@
             background: linear-gradient(135deg, #f0f4ff, #a0c0ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             align-items: center;
             flex-wrap: wrap;
         }
@@ -81,6 +80,15 @@
             border-color: rgba(100, 180, 255, 0.3);
         }
 
+        .nav-link.logout {
+            color: #ff8a8a;
+        }
+
+        .nav-link.logout:hover {
+            background: rgba(255, 100, 100, 0.1);
+            border-color: rgba(255, 100, 100, 0.3);
+        }
+
         .user-balance {
             background: rgba(100, 180, 255, 0.15);
             padding: 0.5rem 1.5rem;
@@ -90,6 +98,7 @@
             color: #a0d0ff;
         }
 
+        /* Контейнер */
         .container {
             position: relative;
             z-index: 10;
@@ -98,6 +107,7 @@
             padding: 2rem;
         }
 
+        /* Страницы */
         .page {
             display: none;
             animation: fadeIn 0.5s ease;
@@ -112,6 +122,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Карточки */
         .card {
             background: rgba(20, 25, 40, 0.8);
             backdrop-filter: blur(10px);
@@ -124,9 +135,10 @@
         }
 
         .card-wide {
-            max-width: 800px;
+            max-width: 900px;
         }
 
+        /* Формы */
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -156,6 +168,7 @@
             box-shadow: 0 0 20px rgba(100, 180, 255, 0.2);
         }
 
+        /* Кнопки */
         .btn {
             padding: 1rem 2rem;
             border: none;
@@ -199,10 +212,10 @@
             background: linear-gradient(135deg, #ffffff, #a0c0ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
             text-align: center;
         }
 
+        /* Информация о пользователе */
         .user-info {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 24px;
@@ -241,9 +254,9 @@
             background: linear-gradient(135deg, #ffffff, #ffd700);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
+        /* Таблицы */
         .transactions-table {
             width: 100%;
             margin-top: 2rem;
@@ -286,6 +299,7 @@
             border: 1px solid rgba(100, 180, 255, 0.3);
         }
 
+        /* Сообщения */
         .message {
             padding: 1rem;
             border-radius: 16px;
@@ -309,29 +323,39 @@
             color: #b3ffb3;
         }
 
-        .id-hint {
-            text-align: center;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: #8a9bb5;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 0.5rem;
-            border-radius: 12px;
-            border: 1px dashed rgba(255, 255, 255, 0.1);
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
-        .glow-star {
-            position: fixed;
-            width: 5px;
-            height: 5px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 30px 10px rgba(150,200,255,0.6);
-            opacity: 0.4;
-            z-index: 1;
+        .user-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        .star1 { top: 15%; right: 10%; }
-        .star2 { top: 70%; left: 8%; width: 8px; height: 8px; filter: blur(3px); }
+
+        .user-card:hover {
+            background: rgba(100, 180, 255, 0.1);
+            border-color: rgba(100, 180, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .user-card-id {
+            font-family: monospace;
+            color: #a0c0ff;
+            font-size: 0.9rem;
+        }
+
+        .user-card-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0.3rem 0;
+        }
 
         @media (max-width: 768px) {
             .navbar {
@@ -363,52 +387,67 @@
     </style>
 </head>
 <body>
-    <div class="glow-star star1"></div>
-    <div class="glow-star star2"></div>
-
-    <!-- Навигационная панель -->
+    <!-- Навигация -->
     <div class="navbar" id="navbar" style="display: none;">
         <div class="nav-logo">S1T</div>
         <div class="nav-links">
             <a class="nav-link active" onclick="showPage('balance')">Баланс</a>
             <a class="nav-link" onclick="showPage('transfers')">Переводы</a>
             <a class="nav-link" onclick="showPage('history')">История</a>
+            <a class="nav-link" onclick="showPage('users')">Пользователи</a>
             <div class="user-balance" id="navbarBalance">0 S1T</div>
+            <a class="nav-link logout" onclick="logout()">Выход</a>
         </div>
     </div>
 
     <div class="container">
-        <!-- Страница регистрации/входа -->
-        <div class="page active" id="registerPage">
+        <!-- Страница входа/регистрации -->
+        <div class="page active" id="authPage">
             <div class="card">
-                <h1 class="page-title">Вход в S1T</h1>
+                <h1 class="page-title">Добро пожаловать в S1T</h1>
                 
                 <div class="message message-error" id="authError"></div>
                 <div class="message message-success" id="authSuccess"></div>
                 
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-input" id="loginEmail" placeholder="Введите email" autocomplete="off">
+                <!-- Вкладки -->
+                <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                    <button class="btn" style="flex: 1;" onclick="showAuthTab('login')" id="loginTabBtn">Вход</button>
+                    <button class="btn" style="flex: 1;" onclick="showAuthTab('register')" id="registerTabBtn">Регистрация</button>
                 </div>
                 
-                <div class="form-group">
-                    <label class="form-label">Пароль</label>
-                    <input type="password" class="form-input" id="loginPassword" placeholder="Введите пароль">
+                <!-- Форма входа -->
+                <div id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="loginEmail" placeholder="Введите email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" class="form-input" id="loginPassword" placeholder="Введите пароль">
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="login()">Войти</button>
                 </div>
                 
-                <button class="btn btn-primary" onclick="login()">Войти</button>
-                
-                <div style="margin: 1rem 0; text-align: center; color: #8a9bb5;">или</div>
-                
-                <div class="form-group">
-                    <label class="form-label">Новое имя</label>
-                    <input type="text" class="form-input" id="regName" placeholder="Введите имя">
-                </div>
-                
-                <button class="btn btn-success" onclick="register()">Зарегистрироваться</button>
-                
-                <div class="id-hint">
-                    После регистрации вы получите уникальный ID для переводов
+                <!-- Форма регистрации (скрыта по умолчанию) -->
+                <div id="registerForm" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Имя</label>
+                        <input type="text" class="form-input" id="regName" placeholder="Введите имя">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="regEmail" placeholder="Введите email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" class="form-input" id="regPassword" placeholder="Придумайте пароль">
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="register()">Зарегистрироваться</button>
                 </div>
             </div>
         </div>
@@ -420,7 +459,7 @@
                 
                 <div class="user-info">
                     <div class="info-row">
-                        <span class="info-label">Имя пользователя</span>
+                        <span class="info-label">Имя</span>
                         <span class="info-value" id="displayName">-</span>
                     </div>
                     <div class="info-row">
@@ -428,8 +467,8 @@
                         <span class="info-value" id="displayEmail">-</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Ваш ID для переводов</span>
-                        <span class="info-value" id="displayId" style="font-size: 1.3rem; background: rgba(100,180,255,0.1); padding: 0.2rem 0.8rem; border-radius: 50px;">-</span>
+                        <span class="info-label">Ваш ID</span>
+                        <span class="info-value" id="displayId" style="font-size: 1.3rem;">-</span>
                     </div>
                 </div>
                 
@@ -464,18 +503,35 @@
                 
                 <div class="form-group">
                     <label class="form-label">ID получателя</label>
-                    <input type="text" class="form-input" id="recipientId" placeholder="Введите ID получателя (например: USR-XXXXXX)">
+                    <input type="text" class="form-input" id="recipientId" placeholder="Например: USR-ABC123">
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">Сумма перевода</label>
+                    <label class="form-label">Сумма</label>
                     <input type="number" class="form-input" id="transferAmount" placeholder="Введите сумму" min="1">
                 </div>
                 
-                <button class="btn btn-primary" onclick="makeTransfer()">Отправить перевод</button>
+                <button class="btn btn-primary" onclick="makeTransfer()">Отправить</button>
+                
+                <div style="margin-top: 1rem; text-align: center;">
+                    <a class="nav-link" style="display: inline-block;" onclick="showPage('users')">👥 Посмотреть всех пользователей</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Страница списка пользователей -->
+        <div class="page" id="usersPage">
+            <div class="card card-wide">
+                <h2 class="page-title">Пользователи системы</h2>
+                
+                <div class="message message-error" id="usersError"></div>
+                
+                <div id="usersList" class="users-grid">
+                    <!-- Здесь будут пользователи -->
+                </div>
                 
                 <div style="margin-top: 2rem; text-align: center;">
-                    <a class="nav-link" style="display: inline-block;" onclick="showPage('balance')">← Вернуться к балансу</a>
+                    <a class="nav-link" style="display: inline-block;" onclick="showPage('transfers')">← Назад к переводам</a>
                 </div>
             </div>
         </div>
@@ -490,34 +546,29 @@
                         <tr>
                             <th>ID транзакции</th>
                             <th>Тип</th>
-                            <th>ID получателя/отправителя</th>
-                            <th>Имя</th>
+                            <th>С кем</th>
                             <th>Сумма</th>
                             <th>Дата</th>
                         </tr>
                     </thead>
                     <tbody id="transactionsList">
                         <tr>
-                            <td colspan="6" style="text-align: center; color: #8a9bb5; padding: 2rem;">
-                                История переводов пуста
+                            <td colspan="5" style="text-align: center; color: #8a9bb5; padding: 2rem;">
+                                Загрузка...
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                
-                <div style="margin-top: 2rem; text-align: center;">
-                    <a class="nav-link" style="display: inline-block;" onclick="showPage('balance')">← Вернуться к балансу</a>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- Подключаем Firebase -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <script>
-        // ВАЖНО: Замените эти данные на свои из консоли Firebase!
+        // 🔧 ЗАМЕНИТЕ НА СВОИ ДАННЫЕ ИЗ FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyBlk7ZmdrsWx__SbodPmbdlTBD2WquozJI",
             authDomain: "balance-s1eep.firebaseapp.com",
@@ -530,16 +581,40 @@
 
         // Инициализация Firebase
         firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        const db = firebase.database();
 
-        // Глобальные переменные
+        // Текущий пользователь
         let currentUser = JSON.parse(localStorage.getItem('s1t_currentUser')) || null;
 
-        // Функции работы с Firebase
+        // Показать вкладку авторизации
+        function showAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginBtn = document.getElementById('loginTabBtn');
+            const registerBtn = document.getElementById('registerTabBtn');
+            
+            if (tab === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                loginBtn.classList.add('btn-primary');
+                loginBtn.classList.remove('btn');
+                registerBtn.classList.add('btn');
+                registerBtn.classList.remove('btn-primary');
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                registerBtn.classList.add('btn-success');
+                registerBtn.classList.remove('btn');
+                loginBtn.classList.add('btn');
+                loginBtn.classList.remove('btn-primary');
+            }
+        }
+
+        // Регистрация
         async function register() {
             const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
             const errorDiv = document.getElementById('authError');
             const successDiv = document.getElementById('authSuccess');
             
@@ -547,43 +622,68 @@
             successDiv.classList.remove('show');
             
             if (!name || !email || !password) {
-                showError(errorDiv, 'Заполните все поля');
+                errorDiv.textContent = 'Заполните все поля';
+                errorDiv.classList.add('show');
                 return;
             }
             
             try {
-                // Проверяем, существует ли пользователь
-                const snapshot = await database.ref('users').orderByChild('email').equalTo(email).once('value');
+                // Проверяем, есть ли уже такой email
+                const usersSnapshot = await db.ref('users').once('value');
+                let emailExists = false;
                 
-                if (snapshot.exists()) {
-                    showError(errorDiv, 'Пользователь с таким email уже существует');
+                usersSnapshot.forEach(child => {
+                    if (child.val().email === email) {
+                        emailExists = true;
+                    }
+                });
+                
+                if (emailExists) {
+                    errorDiv.textContent = 'Пользователь с таким email уже существует';
+                    errorDiv.classList.add('show');
                     return;
                 }
                 
-                // Создаем нового пользователя
+                // Генерируем уникальный ID
+                let userId;
+                let idExists;
+                do {
+                    userId = 'USR-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+                    const idCheck = await db.ref('users/' + userId).once('value');
+                    idExists = idCheck.exists();
+                } while (idExists);
+                
+                // Создаем пользователя
                 const newUser = {
-                    id: 'USR-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
+                    id: userId,
                     name: name,
                     email: email,
-                    password: password, // В реальном проекте пароль нужно хешировать!
+                    password: password,
                     balance: 1000,
                     createdAt: new Date().toISOString()
                 };
                 
                 // Сохраняем в Firebase
-                await database.ref('users/' + newUser.id).set(newUser);
+                await db.ref('users/' + userId).set(newUser);
                 
-                successDiv.textContent = 'Регистрация успешна! Теперь можно войти.';
+                successDiv.textContent = `Регистрация успешна! Ваш ID: ${userId}`;
                 successDiv.classList.add('show');
                 
                 // Очищаем поля
                 document.getElementById('regName').value = '';
+                document.getElementById('regEmail').value = '';
+                document.getElementById('regPassword').value = '';
+                
+                // Переключаем на вкладку входа
+                showAuthTab('login');
                 
             } catch (error) {
-                showError(errorDiv, 'Ошибка: ' + error.message);
+                errorDiv.textContent = 'Ошибка: ' + error.message;
+                errorDiv.classList.add('show');
             }
         }
 
+        // Вход
         async function login() {
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
@@ -592,53 +692,62 @@
             errorDiv.classList.remove('show');
             
             if (!email || !password) {
-                showError(errorDiv, 'Введите email и пароль');
+                errorDiv.textContent = 'Введите email и пароль';
+                errorDiv.classList.add('show');
                 return;
             }
             
             try {
                 // Ищем пользователя по email
-                const snapshot = await database.ref('users').orderByChild('email').equalTo(email).once('value');
+                const usersSnapshot = await db.ref('users').once('value');
+                let foundUser = null;
                 
-                if (!snapshot.exists()) {
-                    showError(errorDiv, 'Пользователь не найден');
-                    return;
-                }
-                
-                // Получаем данные пользователя
-                let user = null;
-                snapshot.forEach(child => {
-                    const u = child.val();
-                    if (u.password === password) { // В реальном проекте проверяйте хеш!
-                        user = u;
+                usersSnapshot.forEach(child => {
+                    const user = child.val();
+                    if (user.email === email && user.password === password) {
+                        foundUser = user;
                     }
                 });
                 
-                if (!user) {
-                    showError(errorDiv, 'Неверный пароль');
+                if (!foundUser) {
+                    errorDiv.textContent = 'Неверный email или пароль';
+                    errorDiv.classList.add('show');
                     return;
                 }
                 
                 // Сохраняем пользователя
-                currentUser = user;
-                localStorage.setItem('s1t_currentUser', JSON.stringify(user));
+                currentUser = foundUser;
+                localStorage.setItem('s1t_currentUser', JSON.stringify(foundUser));
                 
                 // Показываем интерфейс
                 document.getElementById('navbar').style.display = 'flex';
                 showPage('balance');
                 updateUserDisplay();
                 
-                // Подписываемся на обновления баланса
-                subscribeToUserUpdates(user.id);
+                // Подписываемся на обновления
+                subscribeToUserUpdates(foundUser.id);
                 
             } catch (error) {
-                showError(errorDiv, 'Ошибка: ' + error.message);
+                errorDiv.textContent = 'Ошибка: ' + error.message;
+                errorDiv.classList.add('show');
             }
         }
 
-        // Подписка на обновления пользователя в реальном времени
+        // Выход
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('s1t_currentUser');
+            document.getElementById('navbar').style.display = 'none';
+            showPage('authPage');
+            
+            // Очищаем поля входа
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        // Подписка на обновления пользователя
         function subscribeToUserUpdates(userId) {
-            const userRef = database.ref('users/' + userId);
+            const userRef = db.ref('users/' + userId);
             userRef.on('value', (snapshot) => {
                 const updatedUser = snapshot.val();
                 if (updatedUser && currentUser) {
@@ -646,7 +755,6 @@
                     localStorage.setItem('s1t_currentUser', JSON.stringify(currentUser));
                     updateBalanceDisplay();
                     
-                    // Если мы на странице переводов, обновляем отображение баланса
                     if (document.getElementById('transfersPage').classList.contains('active')) {
                         document.getElementById('transferBalance').textContent = currentUser.balance + ' S1T';
                     }
@@ -654,6 +762,83 @@
             });
         }
 
+        // Показать страницу
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            document.getElementById(pageName + 'Page').classList.add('active');
+            
+            if (pageName === 'balance') {
+                updateUserDisplay();
+            } else if (pageName === 'transfers') {
+                document.getElementById('transferBalance').textContent = currentUser.balance + ' S1T';
+                document.getElementById('transferMyId').textContent = currentUser.id;
+            } else if (pageName === 'history') {
+                loadHistory();
+            } else if (pageName === 'users') {
+                loadUsers();
+            }
+        }
+
+        // Обновление информации о пользователе
+        function updateUserDisplay() {
+            if (currentUser) {
+                document.getElementById('displayName').textContent = currentUser.name;
+                document.getElementById('displayEmail').textContent = currentUser.email;
+                document.getElementById('displayId').textContent = currentUser.id;
+                document.getElementById('displayBalance').textContent = currentUser.balance + ' S1T';
+                document.getElementById('navbarBalance').textContent = currentUser.balance + ' S1T';
+            }
+        }
+
+        function updateBalanceDisplay() {
+            if (currentUser) {
+                document.getElementById('displayBalance').textContent = currentUser.balance + ' S1T';
+                document.getElementById('navbarBalance').textContent = currentUser.balance + ' S1T';
+            }
+        }
+
+        // Загрузка списка пользователей
+        async function loadUsers() {
+            try {
+                const snapshot = await db.ref('users').once('value');
+                const usersList = document.getElementById('usersList');
+                
+                let html = '';
+                snapshot.forEach(child => {
+                    const user = child.val();
+                    if (user.id !== currentUser.id) {
+                        html += `
+                            <div class="user-card" onclick="selectUser('${user.id}')">
+                                <div class="user-card-id">${user.id}</div>
+                                <div class="user-card-name">${user.name}</div>
+                                <div style="color: #8a9bb5; font-size: 0.9rem;">${user.email}</div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                if (html === '') {
+                    html = '<div style="text-align: center; color: #8a9bb5; padding: 2rem;">Нет других пользователей</div>';
+                }
+                
+                usersList.innerHTML = html;
+                
+            } catch (error) {
+                document.getElementById('usersError').textContent = 'Ошибка загрузки: ' + error.message;
+                document.getElementById('usersError').classList.add('show');
+            }
+        }
+
+        // Выбор пользователя для перевода
+        function selectUser(userId) {
+            document.getElementById('recipientId').value = userId;
+            showPage('transfers');
+        }
+
+        // Перевод средств
         async function makeTransfer() {
             const recipientId = document.getElementById('recipientId').value.trim().toUpperCase();
             const amount = parseInt(document.getElementById('transferAmount').value);
@@ -664,31 +849,36 @@
             successDiv.classList.remove('show');
             
             if (!recipientId || !amount) {
-                showError(errorDiv, 'Заполните все поля');
+                errorDiv.textContent = 'Заполните все поля';
+                errorDiv.classList.add('show');
                 return;
             }
             
             if (amount <= 0) {
-                showError(errorDiv, 'Сумма должна быть больше 0');
+                errorDiv.textContent = 'Сумма должна быть больше 0';
+                errorDiv.classList.add('show');
                 return;
             }
             
             if (amount > currentUser.balance) {
-                showError(errorDiv, 'Недостаточно средств');
+                errorDiv.textContent = 'Недостаточно средств';
+                errorDiv.classList.add('show');
                 return;
             }
             
             if (recipientId === currentUser.id) {
-                showError(errorDiv, 'Нельзя перевести самому себе');
+                errorDiv.textContent = 'Нельзя перевести самому себе';
+                errorDiv.classList.add('show');
                 return;
             }
             
             try {
                 // Получаем данные получателя
-                const recipientSnapshot = await database.ref('users/' + recipientId).once('value');
+                const recipientSnapshot = await db.ref('users/' + recipientId).once('value');
                 
                 if (!recipientSnapshot.exists()) {
-                    showError(errorDiv, 'Получатель с таким ID не найден');
+                    errorDiv.textContent = 'Получатель с таким ID не найден';
+                    errorDiv.classList.add('show');
                     return;
                 }
                 
@@ -698,8 +888,8 @@
                 const transactionId = 'TXN-' + Math.random().toString(36).substring(2, 10).toUpperCase() + 
                                      '-' + Math.floor(1000 + Math.random() * 9000);
                 
-                // Создаем транзакцию в Firebase (используем транзакцию для атомарности)
-                await database.ref().update({
+                // Обновляем балансы
+                await db.ref().update({
                     ['users/' + currentUser.id + '/balance']: currentUser.balance - amount,
                     ['users/' + recipientId + '/balance']: recipient.balance + amount,
                     ['transactions/' + transactionId]: {
@@ -714,29 +904,22 @@
                     }
                 });
                 
-                // Показываем успех
-                successDiv.textContent = `Перевод успешно выполнен! ID транзакции: ${transactionId}`;
+                successDiv.textContent = `Перевод выполнен! ID: ${transactionId}`;
                 successDiv.classList.add('show');
                 
-                // Очищаем поля
                 document.getElementById('recipientId').value = '';
                 document.getElementById('transferAmount').value = '';
                 
-                // Обновляем историю, если мы на странице истории
-                if (document.getElementById('historyPage').classList.contains('active')) {
-                    updateHistoryDisplay();
-                }
-                
             } catch (error) {
-                showError(errorDiv, 'Ошибка при переводе: ' + error.message);
+                errorDiv.textContent = 'Ошибка: ' + error.message;
+                errorDiv.classList.add('show');
             }
         }
 
-        async function updateHistoryDisplay() {
-            if (!currentUser) return;
-            
+        // Загрузка истории
+        async function loadHistory() {
             try {
-                const snapshot = await database.ref('transactions')
+                const snapshot = await db.ref('transactions')
                     .orderByChild('date')
                     .limitToLast(50)
                     .once('value');
@@ -749,7 +932,6 @@
                     }
                 });
                 
-                // Сортируем по дате (новые сверху)
                 transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
                 const tbody = document.getElementById('transactionsList');
@@ -757,8 +939,8 @@
                 if (transactions.length === 0) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="6" style="text-align: center; color: #8a9bb5; padding: 2rem;">
-                                История переводов пуста
+                            <td colspan="5" style="text-align: center; color: #8a9bb5; padding: 2rem;">
+                                История пуста
                             </td>
                         </tr>
                     `;
@@ -769,19 +951,16 @@
                 transactions.forEach(t => {
                     const isOutgoing = t.fromId === currentUser.id;
                     const amount = isOutgoing ? -t.amount : +t.amount;
-                    const sign = amount > 0 ? '+' : '-';
                     const amountClass = amount > 0 ? 'transaction-positive' : 'transaction-negative';
-                    const counterpartyId = isOutgoing ? t.toId : t.fromId;
-                    const counterpartyName = isOutgoing ? t.toName : t.fromName;
+                    const counterparty = isOutgoing ? t.toName : t.fromName;
                     const date = new Date(t.date).toLocaleString();
                     
                     html += `
                         <tr>
                             <td class="transaction-id">${t.id}</td>
                             <td>${isOutgoing ? '📤 Отправлено' : '📥 Получено'}</td>
-                            <td class="transaction-id">${counterpartyId}</td>
-                            <td>${counterpartyName}</td>
-                            <td class="${amountClass}">${sign}${Math.abs(amount)} S1T</td>
+                            <td>${counterparty}</td>
+                            <td class="${amountClass}">${amount > 0 ? '+' : '-'}${Math.abs(amount)} S1T</td>
                             <td>${date}</td>
                         </tr>
                     `;
@@ -794,58 +973,6 @@
             }
         }
 
-        // Вспомогательные функции
-        function showPage(pageName) {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            if (pageName === 'balance') {
-                document.getElementById('balancePage').classList.add('active');
-                updateBalanceDisplay();
-            } else if (pageName === 'transfers') {
-                document.getElementById('transfersPage').classList.add('active');
-                document.getElementById('transferBalance').textContent = currentUser.balance + ' S1T';
-                document.getElementById('transferMyId').textContent = currentUser.id;
-            } else if (pageName === 'history') {
-                document.getElementById('historyPage').classList.add('active');
-                updateHistoryDisplay();
-            } else if (pageName === 'registerPage') {
-                document.getElementById('registerPage').classList.add('active');
-            }
-            
-            document.querySelectorAll('.nav-link').forEach(link => {
-                if (link.textContent.toLowerCase().includes(pageName)) {
-                    link.classList.add('active');
-                }
-            });
-        }
-
-        function updateUserDisplay() {
-            if (currentUser) {
-                document.getElementById('displayName').textContent = currentUser.name;
-                document.getElementById('displayEmail').textContent = currentUser.email;
-                document.getElementById('displayId').textContent = currentUser.id;
-                document.getElementById('navbarBalance').textContent = currentUser.balance + ' S1T';
-            }
-        }
-
-        function updateBalanceDisplay() {
-            if (currentUser) {
-                document.getElementById('displayBalance').textContent = currentUser.balance + ' S1T';
-                document.getElementById('navbarBalance').textContent = currentUser.balance + ' S1T';
-            }
-        }
-
-        function showError(element, message) {
-            element.textContent = message;
-            element.classList.add('show');
-        }
-
         // Инициализация
         async function init() {
             if (currentUser) {
@@ -855,7 +982,8 @@
                 subscribeToUserUpdates(currentUser.id);
             } else {
                 document.getElementById('navbar').style.display = 'none';
-                showPage('registerPage');
+                showPage('authPage');
+                showAuthTab('login');
             }
         }
 
