@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S1T | Банкинг</title>
+    <title>S1T | Банкинг (Firebase)</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,6 @@
             overflow-x: hidden;
         }
 
-        /* Декоративный фон */
         body::before {
             content: '';
             position: fixed;
@@ -31,7 +30,6 @@
             z-index: 0;
         }
 
-        /* Навигационная панель */
         .navbar {
             position: fixed;
             top: 0;
@@ -92,7 +90,6 @@
             color: #a0d0ff;
         }
 
-        /* Основной контейнер */
         .container {
             position: relative;
             z-index: 10;
@@ -101,7 +98,6 @@
             padding: 2rem;
         }
 
-        /* Страницы */
         .page {
             display: none;
             animation: fadeIn 0.5s ease;
@@ -116,7 +112,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Карточки */
         .card {
             background: rgba(20, 25, 40, 0.8);
             backdrop-filter: blur(10px);
@@ -132,7 +127,6 @@
             max-width: 800px;
         }
 
-        /* Формы */
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -162,11 +156,6 @@
             box-shadow: 0 0 20px rgba(100, 180, 255, 0.2);
         }
 
-        .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Кнопки */
         .btn {
             padding: 1rem 2rem;
             border: none;
@@ -203,7 +192,6 @@
             border-color: rgba(100, 255, 180, 0.6);
         }
 
-        /* Заголовки */
         .page-title {
             font-size: 2.5rem;
             font-weight: 700;
@@ -215,7 +203,6 @@
             text-align: center;
         }
 
-        /* Информация о пользователе */
         .user-info {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 24px;
@@ -246,7 +233,6 @@
             font-size: 1.1rem;
         }
 
-        /* Баланс */
         .balance-large {
             font-size: 3rem;
             font-weight: 800;
@@ -258,7 +244,6 @@
             background-clip: text;
         }
 
-        /* Таблица транзакций */
         .transactions-table {
             width: 100%;
             margin-top: 2rem;
@@ -292,7 +277,6 @@
             color: #ff6b6b;
         }
 
-        /* Статусы */
         .status-badge {
             display: inline-block;
             padding: 0.3rem 0.8rem;
@@ -302,7 +286,6 @@
             border: 1px solid rgba(100, 180, 255, 0.3);
         }
 
-        /* Сообщения */
         .message {
             padding: 1rem;
             border-radius: 16px;
@@ -326,7 +309,6 @@
             color: #b3ffb3;
         }
 
-        /* Подсказка для ID */
         .id-hint {
             text-align: center;
             margin-top: 0.5rem;
@@ -338,13 +320,6 @@
             border: 1px dashed rgba(255, 255, 255, 0.1);
         }
 
-        .id-hint span {
-            color: #a0d0ff;
-            font-family: monospace;
-            font-weight: 600;
-        }
-
-        /* Декоративные звездочки */
         .glow-star {
             position: fixed;
             width: 5px;
@@ -358,7 +333,6 @@
         .star1 { top: 15%; right: 10%; }
         .star2 { top: 70%; left: 8%; width: 8px; height: 8px; filter: blur(3px); }
 
-        /* Адаптация */
         @media (max-width: 768px) {
             .navbar {
                 padding: 1rem;
@@ -389,11 +363,10 @@
     </style>
 </head>
 <body>
-    <!-- Декоративные элементы -->
     <div class="glow-star star1"></div>
     <div class="glow-star star2"></div>
 
-    <!-- Навигационная панель (видна только после регистрации) -->
+    <!-- Навигационная панель -->
     <div class="navbar" id="navbar" style="display: none;">
         <div class="nav-logo">S1T</div>
         <div class="nav-links">
@@ -405,29 +378,34 @@
     </div>
 
     <div class="container">
-        <!-- Страница регистрации -->
+        <!-- Страница регистрации/входа -->
         <div class="page active" id="registerPage">
             <div class="card">
-                <h1 class="page-title">Регистрация в S1T</h1>
+                <h1 class="page-title">Вход в S1T</h1>
                 
-                <div class="message message-error" id="registerError"></div>
-                
-                <div class="form-group">
-                    <label class="form-label">Ваше имя</label>
-                    <input type="text" class="form-input" id="regName" placeholder="Введите имя" autocomplete="off">
-                </div>
+                <div class="message message-error" id="authError"></div>
+                <div class="message message-success" id="authSuccess"></div>
                 
                 <div class="form-group">
                     <label class="form-label">Email</label>
-                    <input type="email" class="form-input" id="regEmail" placeholder="Введите email" autocomplete="off">
+                    <input type="email" class="form-input" id="loginEmail" placeholder="Введите email" autocomplete="off">
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label">Пароль</label>
-                    <input type="password" class="form-input" id="regPassword" placeholder="Придумайте пароль">
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Введите пароль">
                 </div>
                 
-                <button class="btn btn-primary" onclick="register()">Зарегистрироваться</button>
+                <button class="btn btn-primary" onclick="login()">Войти</button>
+                
+                <div style="margin: 1rem 0; text-align: center; color: #8a9bb5;">или</div>
+                
+                <div class="form-group">
+                    <label class="form-label">Новое имя</label>
+                    <input type="text" class="form-input" id="regName" placeholder="Введите имя">
+                </div>
+                
+                <button class="btn btn-success" onclick="register()">Зарегистрироваться</button>
                 
                 <div class="id-hint">
                     После регистрации вы получите уникальный ID для переводов
@@ -486,7 +464,7 @@
                 
                 <div class="form-group">
                     <label class="form-label">ID получателя</label>
-                    <input type="text" class="form-input" id="recipientId" placeholder="Введите ID получателя (например: USR-XXXXXX)" autocomplete="off">
+                    <input type="text" class="form-input" id="recipientId" placeholder="Введите ID получателя (например: USR-XXXXXX)">
                 </div>
                 
                 <div class="form-group">
@@ -507,7 +485,7 @@
             <div class="card card-wide">
                 <h2 class="page-title">История переводов</h2>
                 
-                <table class="transactions-table" id="transactionsTable">
+                <table class="transactions-table">
                     <thead>
                         <tr>
                             <th>ID транзакции</th>
@@ -515,7 +493,7 @@
                             <th>ID получателя/отправителя</th>
                             <th>Имя</th>
                             <th>Сумма</th>
-                            <th>Статус</th>
+                            <th>Дата</th>
                         </tr>
                     </thead>
                     <tbody id="transactionsList">
@@ -534,40 +512,288 @@
         </div>
     </div>
 
+    <!-- Подключаем Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <script>
-        // Хранилище пользователей
-        let users = JSON.parse(localStorage.getItem('s1t_users')) || [];
+        // ВАЖНО: Замените эти данные на свои из консоли Firebase!
+        const firebaseConfig = {
+            apiKey: "AIzaSyBv8hJQqU9X8qU9X8qU9X8qU9X8qU9X8qU9", // Ваш apiKey
+            authDomain: "your-app.firebaseapp.com", // Ваш authDomain
+            databaseURL: "https://your-app-default-rtdb.firebaseio.com", // URL вашей базы данных
+            projectId: "your-app", // Ваш projectId
+            storageBucket: "your-app.appspot.com",
+            messagingSenderId: "123456789012"
+        };
+
+        // Инициализация Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Глобальные переменные
         let currentUser = JSON.parse(localStorage.getItem('s1t_currentUser')) || null;
-        let transactions = JSON.parse(localStorage.getItem('s1t_transactions')) || [];
 
-        // Генерация случайного ID транзакции
-        function generateTransactionId() {
-            return 'TXN-' + Math.random().toString(36).substring(2, 10).toUpperCase() + 
-                   '-' + Math.floor(1000 + Math.random() * 9000);
-        }
-
-        // Генерация ID пользователя (уникальный)
-        function generateUserId() {
-            let id;
-            do {
-                id = 'USR-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-            } while (users.find(u => u.id === id)); // Проверяем, что ID уникальный
-            return id;
-        }
-
-        // Инициализация страницы
-        function init() {
-            if (currentUser) {
-                document.getElementById('navbar').style.display = 'flex';
-                showPage('balance');
-                updateUserDisplay();
-            } else {
-                document.getElementById('navbar').style.display = 'none';
-                showPage('registerPage');
+        // Функции работы с Firebase
+        async function register() {
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('authError');
+            const successDiv = document.getElementById('authSuccess');
+            
+            errorDiv.classList.remove('show');
+            successDiv.classList.remove('show');
+            
+            if (!name || !email || !password) {
+                showError(errorDiv, 'Заполните все поля');
+                return;
+            }
+            
+            try {
+                // Проверяем, существует ли пользователь
+                const snapshot = await database.ref('users').orderByChild('email').equalTo(email).once('value');
+                
+                if (snapshot.exists()) {
+                    showError(errorDiv, 'Пользователь с таким email уже существует');
+                    return;
+                }
+                
+                // Создаем нового пользователя
+                const newUser = {
+                    id: 'USR-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
+                    name: name,
+                    email: email,
+                    password: password, // В реальном проекте пароль нужно хешировать!
+                    balance: 1000,
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Сохраняем в Firebase
+                await database.ref('users/' + newUser.id).set(newUser);
+                
+                successDiv.textContent = 'Регистрация успешна! Теперь можно войти.';
+                successDiv.classList.add('show');
+                
+                // Очищаем поля
+                document.getElementById('regName').value = '';
+                
+            } catch (error) {
+                showError(errorDiv, 'Ошибка: ' + error.message);
             }
         }
 
-        // Показать страницу
+        async function login() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('authError');
+            
+            errorDiv.classList.remove('show');
+            
+            if (!email || !password) {
+                showError(errorDiv, 'Введите email и пароль');
+                return;
+            }
+            
+            try {
+                // Ищем пользователя по email
+                const snapshot = await database.ref('users').orderByChild('email').equalTo(email).once('value');
+                
+                if (!snapshot.exists()) {
+                    showError(errorDiv, 'Пользователь не найден');
+                    return;
+                }
+                
+                // Получаем данные пользователя
+                let user = null;
+                snapshot.forEach(child => {
+                    const u = child.val();
+                    if (u.password === password) { // В реальном проекте проверяйте хеш!
+                        user = u;
+                    }
+                });
+                
+                if (!user) {
+                    showError(errorDiv, 'Неверный пароль');
+                    return;
+                }
+                
+                // Сохраняем пользователя
+                currentUser = user;
+                localStorage.setItem('s1t_currentUser', JSON.stringify(user));
+                
+                // Показываем интерфейс
+                document.getElementById('navbar').style.display = 'flex';
+                showPage('balance');
+                updateUserDisplay();
+                
+                // Подписываемся на обновления баланса
+                subscribeToUserUpdates(user.id);
+                
+            } catch (error) {
+                showError(errorDiv, 'Ошибка: ' + error.message);
+            }
+        }
+
+        // Подписка на обновления пользователя в реальном времени
+        function subscribeToUserUpdates(userId) {
+            const userRef = database.ref('users/' + userId);
+            userRef.on('value', (snapshot) => {
+                const updatedUser = snapshot.val();
+                if (updatedUser && currentUser) {
+                    currentUser = updatedUser;
+                    localStorage.setItem('s1t_currentUser', JSON.stringify(currentUser));
+                    updateBalanceDisplay();
+                    
+                    // Если мы на странице переводов, обновляем отображение баланса
+                    if (document.getElementById('transfersPage').classList.contains('active')) {
+                        document.getElementById('transferBalance').textContent = currentUser.balance + ' S1T';
+                    }
+                }
+            });
+        }
+
+        async function makeTransfer() {
+            const recipientId = document.getElementById('recipientId').value.trim().toUpperCase();
+            const amount = parseInt(document.getElementById('transferAmount').value);
+            const errorDiv = document.getElementById('transferError');
+            const successDiv = document.getElementById('transferSuccess');
+            
+            errorDiv.classList.remove('show');
+            successDiv.classList.remove('show');
+            
+            if (!recipientId || !amount) {
+                showError(errorDiv, 'Заполните все поля');
+                return;
+            }
+            
+            if (amount <= 0) {
+                showError(errorDiv, 'Сумма должна быть больше 0');
+                return;
+            }
+            
+            if (amount > currentUser.balance) {
+                showError(errorDiv, 'Недостаточно средств');
+                return;
+            }
+            
+            if (recipientId === currentUser.id) {
+                showError(errorDiv, 'Нельзя перевести самому себе');
+                return;
+            }
+            
+            try {
+                // Получаем данные получателя
+                const recipientSnapshot = await database.ref('users/' + recipientId).once('value');
+                
+                if (!recipientSnapshot.exists()) {
+                    showError(errorDiv, 'Получатель с таким ID не найден');
+                    return;
+                }
+                
+                const recipient = recipientSnapshot.val();
+                
+                // Генерируем ID транзакции
+                const transactionId = 'TXN-' + Math.random().toString(36).substring(2, 10).toUpperCase() + 
+                                     '-' + Math.floor(1000 + Math.random() * 9000);
+                
+                // Создаем транзакцию в Firebase (используем транзакцию для атомарности)
+                await database.ref().update({
+                    ['users/' + currentUser.id + '/balance']: currentUser.balance - amount,
+                    ['users/' + recipientId + '/balance']: recipient.balance + amount,
+                    ['transactions/' + transactionId]: {
+                        id: transactionId,
+                        fromId: currentUser.id,
+                        toId: recipientId,
+                        fromName: currentUser.name,
+                        toName: recipient.name,
+                        amount: amount,
+                        date: new Date().toISOString(),
+                        status: 'completed'
+                    }
+                });
+                
+                // Показываем успех
+                successDiv.textContent = `Перевод успешно выполнен! ID транзакции: ${transactionId}`;
+                successDiv.classList.add('show');
+                
+                // Очищаем поля
+                document.getElementById('recipientId').value = '';
+                document.getElementById('transferAmount').value = '';
+                
+                // Обновляем историю, если мы на странице истории
+                if (document.getElementById('historyPage').classList.contains('active')) {
+                    updateHistoryDisplay();
+                }
+                
+            } catch (error) {
+                showError(errorDiv, 'Ошибка при переводе: ' + error.message);
+            }
+        }
+
+        async function updateHistoryDisplay() {
+            if (!currentUser) return;
+            
+            try {
+                const snapshot = await database.ref('transactions')
+                    .orderByChild('date')
+                    .limitToLast(50)
+                    .once('value');
+                
+                const transactions = [];
+                snapshot.forEach(child => {
+                    const t = child.val();
+                    if (t.fromId === currentUser.id || t.toId === currentUser.id) {
+                        transactions.push(t);
+                    }
+                });
+                
+                // Сортируем по дате (новые сверху)
+                transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                const tbody = document.getElementById('transactionsList');
+                
+                if (transactions.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #8a9bb5; padding: 2rem;">
+                                История переводов пуста
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                transactions.forEach(t => {
+                    const isOutgoing = t.fromId === currentUser.id;
+                    const amount = isOutgoing ? -t.amount : +t.amount;
+                    const sign = amount > 0 ? '+' : '-';
+                    const amountClass = amount > 0 ? 'transaction-positive' : 'transaction-negative';
+                    const counterpartyId = isOutgoing ? t.toId : t.fromId;
+                    const counterpartyName = isOutgoing ? t.toName : t.fromName;
+                    const date = new Date(t.date).toLocaleString();
+                    
+                    html += `
+                        <tr>
+                            <td class="transaction-id">${t.id}</td>
+                            <td>${isOutgoing ? '📤 Отправлено' : '📥 Получено'}</td>
+                            <td class="transaction-id">${counterpartyId}</td>
+                            <td>${counterpartyName}</td>
+                            <td class="${amountClass}">${sign}${Math.abs(amount)} S1T</td>
+                            <td>${date}</td>
+                        </tr>
+                    `;
+                });
+                
+                tbody.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Ошибка загрузки истории:', error);
+            }
+        }
+
+        // Вспомогательные функции
         function showPage(pageName) {
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
@@ -591,7 +817,6 @@
                 document.getElementById('registerPage').classList.add('active');
             }
             
-            // Подсветка активной ссылки
             document.querySelectorAll('.nav-link').forEach(link => {
                 if (link.textContent.toLowerCase().includes(pageName)) {
                     link.classList.add('active');
@@ -599,51 +824,6 @@
             });
         }
 
-        // Регистрация
-        function register() {
-            const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value;
-            const errorDiv = document.getElementById('registerError');
-            
-            errorDiv.classList.remove('show');
-            
-            if (!name || !email || !password) {
-                showError(errorDiv, 'Заполните все поля');
-                return;
-            }
-            
-            if (users.find(u => u.email === email)) {
-                showError(errorDiv, 'Пользователь с таким email уже существует');
-                return;
-            }
-            
-            // Создаем нового пользователя с уникальным ID
-            const newUser = {
-                id: generateUserId(),
-                name: name,
-                email: email,
-                password: password,
-                balance: 1000 // Стартовый баланс
-            };
-            
-            users.push(newUser);
-            currentUser = newUser;
-            
-            // Сохраняем в localStorage
-            localStorage.setItem('s1t_users', JSON.stringify(users));
-            localStorage.setItem('s1t_currentUser', JSON.stringify(currentUser));
-            
-            // Показываем навбар и баланс
-            document.getElementById('navbar').style.display = 'flex';
-            showPage('balance');
-            updateUserDisplay();
-            
-            // Показываем сообщение с ID пользователя
-            showSuccess(registerError, `Регистрация успешна! Ваш ID: ${newUser.id}. Сохраните его для переводов.`);
-        }
-
-        // Обновление отображения пользователя
         function updateUserDisplay() {
             if (currentUser) {
                 document.getElementById('displayName').textContent = currentUser.name;
@@ -653,7 +833,6 @@
             }
         }
 
-        // Обновление баланса
         function updateBalanceDisplay() {
             if (currentUser) {
                 document.getElementById('displayBalance').textContent = currentUser.balance + ' S1T';
@@ -661,164 +840,25 @@
             }
         }
 
-        // Сделать перевод
-        function makeTransfer() {
-            const recipientId = document.getElementById('recipientId').value.trim().toUpperCase();
-            const amount = parseInt(document.getElementById('transferAmount').value);
-            const errorDiv = document.getElementById('transferError');
-            const successDiv = document.getElementById('transferSuccess');
-            
-            errorDiv.classList.remove('show');
-            successDiv.classList.remove('show');
-            
-            // Валидация
-            if (!recipientId || !amount) {
-                showError(errorDiv, 'Заполните все поля');
-                return;
-            }
-            
-            if (amount <= 0) {
-                showError(errorDiv, 'Сумма должна быть больше 0');
-                return;
-            }
-            
-            if (amount > currentUser.balance) {
-                showError(errorDiv, 'Недостаточно средств');
-                return;
-            }
-            
-            if (recipientId === currentUser.id) {
-                showError(errorDiv, 'Нельзя перевести самому себе');
-                return;
-            }
-            
-            // Ищем получателя по ID
-            const recipient = users.find(u => u.id === recipientId);
-            
-            if (!recipient) {
-                showError(errorDiv, 'Получатель с таким ID не найден');
-                return;
-            }
-            
-            // Генерируем ID транзакции
-            const transactionId = generateTransactionId();
-            
-            // Создаем транзакцию
-            const transaction = {
-                id: transactionId,
-                fromId: currentUser.id,
-                toId: recipient.id,
-                fromName: currentUser.name,
-                toName: recipient.name,
-                amount: amount,
-                date: new Date().toISOString(),
-                status: 'completed'
-            };
-            
-            // Обновляем балансы
-            currentUser.balance -= amount;
-            recipient.balance += amount;
-            
-            // Обновляем пользователя в массиве
-            const currentUserIndex = users.findIndex(u => u.id === currentUser.id);
-            users[currentUserIndex] = currentUser;
-            
-            const recipientIndex = users.findIndex(u => u.id === recipient.id);
-            users[recipientIndex] = recipient;
-            
-            // Сохраняем транзакцию
-            transactions.push(transaction);
-            
-            // Сохраняем в localStorage
-            localStorage.setItem('s1t_users', JSON.stringify(users));
-            localStorage.setItem('s1t_currentUser', JSON.stringify(currentUser));
-            localStorage.setItem('s1t_transactions', JSON.stringify(transactions));
-            
-            // Показываем успех
-            successDiv.textContent = `Перевод успешно выполнен! ID транзакции: ${transactionId}`;
-            successDiv.classList.add('show');
-            
-            // Очищаем поля
-            document.getElementById('recipientId').value = '';
-            document.getElementById('transferAmount').value = '';
-            
-            // Обновляем отображение баланса
-            document.getElementById('transferBalance').textContent = currentUser.balance + ' S1T';
-            updateBalanceDisplay();
-        }
-
-        // Обновление истории
-        function updateHistoryDisplay() {
-            if (!currentUser) return;
-            
-            const userTransactions = transactions.filter(t => 
-                t.fromId === currentUser.id || t.toId === currentUser.id
-            ).sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            const tbody = document.getElementById('transactionsList');
-            
-            if (userTransactions.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; color: #8a9bb5; padding: 2rem;">
-                            История переводов пуста
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            let html = '';
-            userTransactions.forEach(t => {
-                const isOutgoing = t.fromId === currentUser.id;
-                const amount = isOutgoing ? -t.amount : +t.amount;
-                const sign = amount > 0 ? '+' : '-';
-                const amountClass = amount > 0 ? 'transaction-positive' : 'transaction-negative';
-                const counterpartyId = isOutgoing ? t.toId : t.fromId;
-                const counterpartyName = isOutgoing ? t.toName : t.fromName;
-                
-                html += `
-                    <tr>
-                        <td class="transaction-id">${t.id}</td>
-                        <td>${isOutgoing ? '📤 Отправлено' : '📥 Получено'}</td>
-                        <td class="transaction-id">${counterpartyId}</td>
-                        <td>${counterpartyName}</td>
-                        <td class="${amountClass}">${sign}${Math.abs(amount)} S1T</td>
-                        <td><span class="status-badge">Выполнено</span></td>
-                    </tr>
-                `;
-            });
-            
-            tbody.innerHTML = html;
-        }
-
-        // Показать ошибку
         function showError(element, message) {
             element.textContent = message;
             element.classList.add('show');
         }
 
-        // Показать успех (для регистрации)
-        function showSuccess(element, message) {
-            element.textContent = message;
-            element.classList.add('show');
-            element.style.background = 'rgba(100, 255, 100, 0.15)';
-            element.style.borderColor = 'rgba(100, 255, 100, 0.3)';
-            element.style.color = '#b3ffb3';
+        // Инициализация
+        async function init() {
+            if (currentUser) {
+                document.getElementById('navbar').style.display = 'flex';
+                showPage('balance');
+                updateUserDisplay();
+                subscribeToUserUpdates(currentUser.id);
+            } else {
+                document.getElementById('navbar').style.display = 'none';
+                showPage('registerPage');
+            }
         }
 
-        // Выход (для тестирования)
-        function logout() {
-            currentUser = null;
-            localStorage.removeItem('s1t_currentUser');
-            document.getElementById('navbar').style.display = 'none';
-            showPage('registerPage');
-        }
-
-        // Инициализация при загрузке
         init();
-
-        console.log('✨ S1T Banking System (Переводы по ID) ✨');
     </script>
 </body>
 </html>
